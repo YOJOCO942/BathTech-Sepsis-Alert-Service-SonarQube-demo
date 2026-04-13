@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  sonarqube:
+    image: sonarqube:10-community
+    container_name: bathtech-sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - bathtech-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: bathtech-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: bathtech_sepsis
+      POSTGRES_USER: bathtech
+      POSTGRES_PASSWORD: localdev_only
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - bathtech-net
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  pg_data:
+
+networks:
+  bathtech-net:
+    driver: bridge
